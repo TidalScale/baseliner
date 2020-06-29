@@ -11,6 +11,7 @@ print_usage() {
   echo "  -p <pretasks>  file containing pre-tasks (default: None)."
   echo "  -q <posttasks> file containing post-tasks (default: None)."
   echo "  -e             terminate execution on first failure (default: false)."
+  echo "  -v             passes through verbose option to Ansible (-vvv for more, -vvvv to enable connection debugging)."
   exit $1
 }
 
@@ -24,8 +25,9 @@ failfast="false"
 delay=60
 pre_tasks_file=""
 post_tasks_file=""
+verbose=""
 
-while getopts ":f:a:o:i:m:d:p:q:esh" o; do
+while getopts ":f:a:o:i:m:d:p:q:vesh" o; do
   case "${o}" in
     f)
       config_file="${OPTARG}"
@@ -48,6 +50,9 @@ while getopts ":f:a:o:i:m:d:p:q:esh" o; do
     q)
       post_tasks_file="-e post_tasks_file=${OPTARG}"
       ;;
+	  v)
+	    verbose+="v"
+	    ;;
     e)
       failfast="true"
       ;;
@@ -62,6 +67,10 @@ while getopts ":f:a:o:i:m:d:p:q:esh" o; do
       ;;
   esac
 done
+
+if [ -n "$verbose" ]; then
+  verbose="-"$verbose
+fi
 
 cat >ansible.cfg <<EOL
 [defaults]
@@ -101,7 +110,7 @@ ansible-playbook \
   -e stop_all="${stop_all}" \
   -e failfast="${failfast}" \
   -e test_wait_delay="${delay}" \
-  $pre_tasks_file $post_tasks_file \
+  $pre_tasks_file $post_tasks_file $verbose \
   ./playbook.yml
 
 ansible_result=$?

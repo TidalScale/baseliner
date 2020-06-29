@@ -50,9 +50,9 @@ while getopts ":f:a:o:i:m:d:p:q:vesh" o; do
     q)
       post_tasks_file="-e post_tasks_file=${OPTARG}"
       ;;
-	  v)
-	    verbose+="v"
-	    ;;
+    v)
+      verbose+="v"
+      ;;
     e)
       failfast="true"
       ;;

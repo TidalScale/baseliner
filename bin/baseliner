@@ -81,6 +81,7 @@ retry_files_enabled = false
 host_key_checking = false
 callback_whitelist = profile_tasks, timer
 [ssh_connection]
+ssh_args = -o ControlMaster=no -o ControlPersist=10m
 retries=20
 EOL
 
